@@ -1,0 +1,16 @@
+from schemas.bases import Base
+from schemas.prefixes import PrefixComposingRule
+from schemas.prefixes.ex import Ex
+
+
+class ExRightToLeftAssimilationRule(PrefixComposingRule):
+    def __init__(self):
+        self.rules = [
+            (("c", "f"), lambda p, s: p[:-1] + s[0])
+        ]
+
+    def matches(self, left, right):
+        return isinstance(left, Ex) and isinstance(right, Base)
+
+    def apply(self, left, right):
+        return super().apply(left, right)
