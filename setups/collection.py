@@ -416,5 +416,4 @@ class CollectionBuilder:
                 word_builder.two_prefixes_one_base_two_suffixes_combinations,
                 word_builder.two_prefixes_one_base_three_suffixes_combinations,
             ]:
-                # print(builder())
                 self.insert_search(builder())
