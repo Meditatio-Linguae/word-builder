@@ -4,8 +4,7 @@ from sqlalchemy import MetaData
 from sqlalchemy.orm import Session
 
 from schemas.database import Database
-from schemas.bases import Base as WordBase
-from utils.search import CountryCode
+from schemas.bases import Base as WordBase, NounBase
 
 
 def migrate(engine):
@@ -16,27 +15,15 @@ def migrate(engine):
     Database.metadata.create_all(engine, checkfirst=True)
 
     with Session(engine) as session:
-        with open("data/bases.csv", "r") as f:
+        with open("data/noun_bases.csv", "r") as f:
             reader = csv.reader(f)
+            next(reader)
             for row in reader:
-                meanings = row[2]
-                main_orth = row[0]
-                other_orths = row[1].split("|") if row[1] != "" else []
-
-                session.add(
-                    WordBase(
-                        orth=main_orth,
-                        meanings=meanings
-                    )
+                base = WordBase(
+                    orth=row[1] if row[1] != "" else row[0],
+                    meanings=row[4]
                 )
-                session.add_all(
-                    [
-                        WordBase(
-                            orth=other_orth,
-                            meanings=meanings
-                        )
-                        for other_orth in other_orths
-                    ]
-                )
+                session.add(base)
+                session.add(NounBase(declension=int(row[2]), base=base))
 
         session.commit()
